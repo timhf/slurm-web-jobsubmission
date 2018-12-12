@@ -1,0 +1,26 @@
+{% extends "./base.html" %}
+
+{% load render_table from django_tables2 %}
+
+
+{% block content %}
+<h1>Create a new job</h1>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+    <table>
+      {% for field in form.visible_fields %}
+      <tr>
+        <td width=40%>{{ field.label_tag }}</td>
+        <td>
+          {{ field.errors }}
+          {{ field }}
+          {{ field.help_text }}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    {% render_table available_images %}
+
+    <input type="submit" value="Next">
+</form>
+{% endblock content %}

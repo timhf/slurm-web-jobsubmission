@@ -1,0 +1,69 @@
+{% extends "./base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<script type="text/javascript">
+function toggleview() {
+    var x = document.getElementById("details_div");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+
+window.onload = function(){
+  var tb = document.getElementById("std_out_ta")
+  tb.scrollTop = tb.scrollHeight;
+  //$('#std_out_ta').scrollTop($('#std_out_ta')[0].scrollHeight);
+}
+</script>
+
+<h1>Job details</h1>
+<p><a href="/queue">Back</a></p>
+
+<table class="no_width">
+  <tr>
+    <td>Name:</td>
+    <td>{{ job_data.job_state }}</td>
+  </tr>
+  <tr>
+    <td>Account:</td>
+    <td>{{ job_data.account }}</td>
+  </tr>
+  <tr>
+    <td>stdout path:</td>
+    <td>{{ job_data.std_out }}</td>
+  </tr>
+</table>
+
+<br>
+<strong>Recent StdOut:</strong></br>
+<textarea rows="15" cols="100" readonly id="std_out_ta"">
+    {{ job_out.std_out }}
+</textarea>
+
+{% if job_out.std_out_available %}
+<a href="{% url 'download_std_out' job_id %}">Download</a>
+{% endif %}
+
+<br><br>
+<strong><a onclick="toggleview()">Show / hide all details</a></strong>
+<div id="details_div" style="display: none">
+  <table width="80%" border="0">
+    {% for key,value in job_data_items %}
+    <!-- <tr class="{% cycle 'odd' 'even' %}"><td>{{ a }}</td></tr> -->
+    <tr>
+      <td>{{ key }}:</td>
+      <td>{{ value }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+<br>
+<h3>All files - <a href="download_all_files">Download all</a></h3>
+{% render_table files_table %}
+<br>
+<p><a href="/queue">Back</a></p>
+
+{% endblock content %}

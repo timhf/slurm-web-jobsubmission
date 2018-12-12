@@ -1,0 +1,22 @@
+{% extends "./base.html" %}
+
+{% block content %}
+<h1>Job overview</h1>
+{% if latest_job_list %}
+<table>
+  <tr>
+    <th>JobId</th>
+    <th>User</th>
+    <th>Status</th>
+    <th>Requirements</th>
+  </tr>
+</table>
+	<ul>
+		{% for job in latest_job_list %}
+		<li><a href="job/{{ job.id }}">{{ job.name }}</a></li>
+		{% endfor %}
+	</ul>
+{% else %}
+	<p>No jobs are available.</p>
+{% endif %}
+{% endblock content %}

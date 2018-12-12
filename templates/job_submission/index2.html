@@ -1,0 +1,28 @@
+{% extends "./base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+  <h1>Overview</h1>
+  <a href="{% url 'django-pam:login' %}">Login</a> -
+  <a href="{% url 'django-pam:logout' %}?next={{ next }}">Logout</a>
+  <br>
+  <h3>Cluster stats</h3>
+  <table style="width: 40%">
+    <tr>
+      <td>CPUs:</td>
+      <td>{{ stats.cpus_util }} / {{ stats.cpus_total }}</td>
+    </tr>
+    <tr>
+      <td>System memory:</td>
+      <td>{{ stats.ram_util }} / {{ stats.ram_total }}</td>
+    </tr>
+    <tr>
+      <td>GPUs:</td>
+      <td>{{ stats.gpus_util }} / {{ stats.gpus_total }}</td>
+    </tr>
+  </table>
+  <h3>Jobs</h3>
+  {% render_table table %}
+  <br>
+  <p><a href="create_job">Create a new job</a></p>
+{% endblock content %}

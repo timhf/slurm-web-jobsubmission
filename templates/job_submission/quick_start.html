@@ -1,0 +1,38 @@
+{% extends "./base.html" %}
+
+
+{% block content %}
+<h1>Quick tutorial</h1>
+<h3>How to create a job</h3>
+<ul>
+  <li>Click "Create a new job"</li>
+  <li>Enter a job name</li>
+  <li>Specifiy your CPU, GPU and RAM requirements</li>
+  <li>Pick an image. These referr to docker images available on the system. If you need a special configuration ask your supervisor to deploy it.</li>
+  <li>Upload your project as zip archive</li>
+  <li>Click next</li>
+  <li>Select your start script from the python image</li>
+</ul>
+
+<h3>Extending an available image</h3>
+<p>We offer images for all common frameworks and environemnts. However, if you
+need some extra python packages or libraries you can add them by yourself. Since
+every job runs in a docker container all changes are allowed, but they are not
+persitent in the image itself. </p>
+<p>Instead of using, for example a python script to start your project, you can
+use a shell script and install required packages before starting your job. Use
+apt to install packages, containers are based on Ubuntu and conda for python
+packages. Like this:</p>
+<p style="font-family: Courier; margin-left: 1cm">
+  #!/bin/bash<br>
+  <br>
+  apt-get install ubuntu-package <br>
+  conda install python-package <br>
+  <br>
+  python your_script.py <br>
+</p>
+<p>In order to successfully run this please select either "ubuntu_raw" or
+"conda_raw" as base image.</p>
+
+<p><a href="/queue">Back</a></p>
+{% endblock content %}

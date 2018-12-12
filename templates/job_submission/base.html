@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Job scheduler</title>
+        <link rel="stylesheet" type="text/css" href="{% static "job_submission/main.css" %}">
+    </head>
+
+    <body>
+        <div class="inner">
+          <div class="login_box">
+            {% if user.is_authenticated %}
+            <p>Welcome, {{ user.username }}. &bull; <a href="/queue/logout">Logout</a> &bull; <a href="/queue">Main page</a></p>
+            {% else %}
+            <p>Welcome! Please log in.</p>
+            {% endif %}
+          </div>
+          {% block content %}
+
+          {% endblock content %}
+        </div>
+        <div class="footer">
+          <p>Job scheduler v0.1 - &copy; 2018</p>
+        </div>
+    </body>
+</html>

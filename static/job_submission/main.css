@@ -1,0 +1,87 @@
+html, body{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  font-family: Verdana;
+  vertical-align: baseline;
+  align-content: center;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 200%;
+}
+
+div.inner{
+  margin: auto;
+  max-width: 900px;
+  width: 100%;
+}
+
+div.login_box{
+  text-align: right;
+  background-color: #ddd;
+  padding: 2px;
+  padding-right: 20px;
+}
+
+div.footer{
+  height: 2cm;
+  text-align: center;
+  font-size: 10pt;
+}
+
+table{
+  width: 100%;
+}
+
+table.no_width{
+  width: auto;
+}
+
+td {
+  border: gray 1px;
+  padding: 2px;
+}
+
+a {
+  color: #0644a3;
+  text-decoration: none;
+}
+
+th {
+  font-weight: bold;
+  background-color: #6d83a5;
+}
+
+tr.odd{
+  background-color: white;
+}
+
+tr.even{
+  background-color: #eeeef4;
+}
+
+th a {
+  color: black;
+}
+
+ul.pagination {
+  list-style: none;
+  text-align: center;
+}
+
+ul.pagination li {
+  display: inline-block;
+}
+
+p.error {
+  color:red;
+}
+
+a.create{
+  background-color: #ccc;
+  font-size: 14pt;
+}

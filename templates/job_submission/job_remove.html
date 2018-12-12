@@ -1,0 +1,20 @@
+{% extends "./base.html" %}
+
+{% load render_table from django_tables2 %}
+
+
+{% block content %}
+<h3>Do you really want to delete the job with all its data and parameters?</h3>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+  <table>
+    <tr>
+      <td>
+        <input type="submit" name="yes" value="Yes">
+      </td>
+      <td>
+        <input type="submit" name="no" value="No">
+      </td>
+    </tr>
+  </table>
+</form>
+{% endblock content %}
