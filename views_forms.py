@@ -2,7 +2,7 @@ from django import forms
 
 class JobCreationForm(forms.Form):
     title = forms.CharField(max_length = 255, label="Job title")
-    cpu_requirements = forms.DecimalField(max_value=16, min_value=0, label="No of CPUs required", initial=1)
+    cpu_requirements = forms.DecimalField(max_value=16, min_value=0, label="No. of CPUs required", initial=1)
     ram_requirements = forms.DecimalField(max_value=8192, min_value=0, label="Amount of RAM required (MB)", initial=2048)
     gpu_requirements = forms.BooleanField(label="Is a GPU required", required=False)
     project_files = forms.FileField(label="Project files (zip)")

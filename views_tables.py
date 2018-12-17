@@ -18,6 +18,15 @@ class DockerImagesTable(dt.Table):
     def render_id(self, value):
         return format_html('<input type="radio" name="environment_image" value="{0}" required id="id_environment_image_0">', value)
 
+class SingularityImagesTable(dt.Table):
+    id = dt.Column()
+    name = dt.Column()
+    features = dt.Column()
+    based_on = dt.Column()
+
+    def render_id(self, value):
+        return format_html('<input type="radio" name="environment_image" value="{0}" required id="id_environment_image_0">', value)
+
 class FileTable(dt.Table):
     file_table_file = columns.Column(verbose_name="File")
 

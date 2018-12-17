@@ -13,9 +13,10 @@ import os
 import docker
 import pwd
 
-from .views_tables import QueueTable, DockerImagesTable, SelectFileTable, JobFilesTable
+from .views_tables import QueueTable, DockerImagesTable, SelectFileTable, JobFilesTable, SingularityImagesTable
 from .views_forms import JobCreationForm, JobCreationEntrySelectionForm
 from .job_submission import *
+from .singularity import *
 from .pam_authentification_backend import PAMAuthentificationBackend
 
 #get information about a job with a given id
@@ -264,3 +265,41 @@ def create_sub_file_list(path):
             file_id += 1
 
     return file_list
+
+
+#### TESTS ...
+
+##  Job creation page Test...
+@login_required()
+def job_create_view_test(request):
+    # process form ...
+    if request.method == "POST":
+        form = JobCreationForm(request.POST, request.FILES)
+        if form.is_valid():
+            #get data
+            post_data = request.POST.copy()
+            temp_path = handle_upload_file(request.FILES['project_files'])
+
+            #save data as session
+            request.session['create_temp_path'] = temp_path
+            request.session['create_post_data'] = request.POST
+
+            redirect =  HttpResponseRedirect("create_job_entry")
+            return redirect
+    else:
+        form = JobCreationForm()
+
+    #get all available docker contrainers
+    containers = get_all_container('/home/test/singularity-images/output')
+    container_features = [get_container_details(x) for x in containers]
+
+    tags = [{'id'       : container['image.filename'],
+             'name'     : container['image.filename'],
+             'features' : container['Features'],  #Fixme?
+             'based_on' : container['org.label-schema.usage.singularity.deffile.from'] } \
+            for container in container_features]
+
+    table = SingularityImagesTable(tags)
+    table.paginate(page=request.GET.get('page', 1), per_page=25)
+
+    return render(request, 'job_submission/job_creation_form.html', {'form': form, 'available_images': table})
