@@ -1,5 +1,5 @@
+from django.conf import settings
 import os
-import docker
 import tempfile
 import zipfile
 import subprocess
@@ -22,7 +22,7 @@ def handle_upload_file(file):
 
     return temp_extraction_folder
 
-def submit_job(cpus, ram, gpus, job_name, comment, uid, user_email, docker_image, temp_path, entry_point):
+def submit_job(cpus, ram, gpus, job_name, comment, uid, user_email, singularity_image, temp_path, entry_point):
     #give all files to the user
     os.chown(temp_path, uid=uid, gid=-1)
 
@@ -40,7 +40,9 @@ def submit_job(cpus, ram, gpus, job_name, comment, uid, user_email, docker_image
         # executable file, run without interpreter
         run_command = ""
 
-    docker_command = "docker run -v {0}:/auto_mount_point {1} {2} {3}".format(temp_path, docker_image, run_command, entry_point_mount)
+    singularity_image_path = os.path.join(settings.SINGULARITY_IMAGES_FOLDER, singularity_image)
+
+    script_command = "singularity exec --nv -B {0}:/auto_mount_point {1} {2} {3}".format(temp_path, singularity_image_path, run_command, entry_point_mount)
 
     #build slurm script
     slurm_script_path = os.path.join(temp_path, "runner.job")
@@ -55,7 +57,7 @@ def submit_job(cpus, ram, gpus, job_name, comment, uid, user_email, docker_image
         if gpus >= 1:
             script.write("#SBATCH --gres=gpu:1" + os.linesep)
 
-        script.write(docker_command + os.linesep)
+        script.write(script_command + os.linesep)
 
     #start job
     args = ["sbatch", "--uid={}".format(uid), slurm_script_path]

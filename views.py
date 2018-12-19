@@ -3,6 +3,7 @@ from django.template import loader
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.views import generic
 from django.contrib.auth import login, logout
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django_tables2 import tables, RequestConfig, columns
@@ -103,7 +104,7 @@ def job_download_std_out_view(request, id):
     return response_404()
 
 
-##  Job creation page
+##  Job creation page for singularity images...
 @login_required()
 def job_create_view(request):
     # process form ...
@@ -124,17 +125,21 @@ def job_create_view(request):
         form = JobCreationForm()
 
     #get all available docker contrainers
-    client = docker.from_env()
-    images = client.images.list()
-    tags = [{'id'      : x.id[7:],
-             'tags'    : x.tags,
-             'comment' : x.attrs['Comment'] } \
-            for x in images]
+    containers = get_all_container(settings.SINGULARITY_IMAGES_FOLDER)
+    container_features = [get_container_details(x) for x in containers]
 
-    table = DockerImagesTable(tags)
+    tags = [{'id'       : container['image.filename'],
+             'name'     : container['image.filename'],
+             'features' : container['Features'],  #Fixme?
+             'based_on' : container['org.label-schema.usage.singularity.deffile.from'] } \
+            for container in container_features]
+
+    table = SingularityImagesTable(tags)
     table.paginate(page=request.GET.get('page', 1), per_page=25)
 
     return render(request, 'job_submission/job_creation_form.html', {'form': form, 'available_images': table})
+
+
 
 ## Job entry file selection
 @login_required()
@@ -155,7 +160,7 @@ def job_create_select_entrypoint_view(request):
                            comment=request.POST['comments'],
                            uid=user_id,
                            user_email=user_email,
-                           docker_image=original_post['environment_image'],
+                           singularity_image=original_post['environment_image'],
                            temp_path=request.session["create_temp_path"],
                            entry_point=request.POST['entry_path'])
             else:
@@ -268,38 +273,35 @@ def create_sub_file_list(path):
 
 
 #### TESTS ...
-
-##  Job creation page Test...
-@login_required()
-def job_create_view_test(request):
-    # process form ...
-    if request.method == "POST":
-        form = JobCreationForm(request.POST, request.FILES)
-        if form.is_valid():
-            #get data
-            post_data = request.POST.copy()
-            temp_path = handle_upload_file(request.FILES['project_files'])
-
-            #save data as session
-            request.session['create_temp_path'] = temp_path
-            request.session['create_post_data'] = request.POST
-
-            redirect =  HttpResponseRedirect("create_job_entry")
-            return redirect
-    else:
-        form = JobCreationForm()
-
-    #get all available docker contrainers
-    containers = get_all_container('/home/test/singularity-images/output')
-    container_features = [get_container_details(x) for x in containers]
-
-    tags = [{'id'       : container['image.filename'],
-             'name'     : container['image.filename'],
-             'features' : container['Features'],  #Fixme?
-             'based_on' : container['org.label-schema.usage.singularity.deffile.from'] } \
-            for container in container_features]
-
-    table = SingularityImagesTable(tags)
-    table.paginate(page=request.GET.get('page', 1), per_page=25)
-
-    return render(request, 'job_submission/job_creation_form.html', {'form': form, 'available_images': table})
+##  Job creation page for docker images ... #not used anymore
+# @login_required()
+# def job_create_view(request):
+#     # process form ...
+#     if request.method == "POST":
+#         form = JobCreationForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             #get data
+#             post_data = request.POST.copy()
+#             temp_path = handle_upload_file(request.FILES['project_files'])
+#
+#             #save data as session
+#             request.session['create_temp_path'] = temp_path
+#             request.session['create_post_data'] = request.POST
+#
+#             redirect =  HttpResponseRedirect("create_job_entry")
+#             return redirect
+#     else:
+#         form = JobCreationForm()
+#
+#     #get all available docker contrainers
+#     client = docker.from_env()
+#     images = client.images.list()
+#     tags = [{'id'      : x.id[7:],
+#              'tags'    : x.tags,
+#              'comment' : x.attrs['Comment'] } \
+#             for x in images]
+#
+#     table = DockerImagesTable(tags)
+#     table.paginate(page=request.GET.get('page', 1), per_page=25)
+#
+#     return render(request, 'job_submission/job_creation_form.html', {'form': form, 'available_images': table})

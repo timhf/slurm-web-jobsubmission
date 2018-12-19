@@ -8,7 +8,6 @@ urlpatterns = [
     #path('', views.IndexView.as_view(), name='index'),
     path('', views.index_view, name='index'),
     path('create_job', views.job_create_view, name='create_job'),
-    path('create_job_test', views.job_create_view_test, name='create_job_test'),
     path('create_job_entry', views.job_create_select_entrypoint_view, name='create_job_step2'),
     path('create_job_done', views.job_create_done_view, name='create_job_step3'),
     path('<int:id>/', views.job_details_view, name='details_job'),

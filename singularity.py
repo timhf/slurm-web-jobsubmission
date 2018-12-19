@@ -23,13 +23,15 @@ def get_all_container(path):
     ''' This function is looking for img-files in a given path and returns their
     absolute path as a list
     '''
-    return_value = []
+    image_list = []
 
     for root, _, files in os.walk(path):
         for filename in files:
             full_path = os.path.join(root, filename)
             # FIXME better check for magic rather than extensionm
             if os.path.splitext(full_path)[1] == '.img':
-                return_value.append(full_path)
+                image_list.append(full_path)
 
-    return return_value
+    sorted_image_list = sorted(image_list)
+
+    return sorted_image_list

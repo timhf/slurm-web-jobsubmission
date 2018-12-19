@@ -19,7 +19,7 @@ class DockerImagesTable(dt.Table):
         return format_html('<input type="radio" name="environment_image" value="{0}" required id="id_environment_image_0">', value)
 
 class SingularityImagesTable(dt.Table):
-    id = dt.Column()
+    id = dt.Column(verbose_name=" ")
     name = dt.Column()
     features = dt.Column()
     based_on = dt.Column()
