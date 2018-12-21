@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.urls import reverse
 import django_tables2 as dt
+from file_table.file_table import FileTable
 from datetime import datetime
 import os
 import pwd
@@ -27,37 +28,13 @@ class SingularityImagesTable(dt.Table):
     def render_id(self, value):
         return format_html('<input type="radio" name="environment_image" value="{0}" required id="id_environment_image_0">', value)
 
-class FileTable(dt.Table):
-    file_table_file = columns.Column(verbose_name="File")
-
-    def __init__(self, *args, **kwargs):
-        self.pre_decorator = kwargs.pop('pre_decorator', '')
-        self.post_decorator = kwargs.pop('post_decorator', '')
-        super(dt.Table, self).__init__(*args, **kwargs)
-
-    def render_file_table_file(self, value, record):
-        _, extension = os.path.splitext(value)
-        color = "gray"
-        if extension == ".py":
-            color = "green"
-        elif extension == ".sh":
-            color = "blue"
-
-        file_name = os.path.split(value)[1]
-        indent = 20 * (len(value.split('/')) - 1)
-        if not record['file_table_type'] == 'file':
-            color = "black"
-
-        return format_html('{3}<span style="color:{1}; margin-left:{2}px;">{0}</span>{4}',
-                           file_name, color, indent, self.pre_decorator, self.post_decorator)
-
 class SelectFileTable(FileTable):
     selection = columns.Column(verbose_name="Selection", empty_values=())
 
     def render_selection(self, value, record):
         return format_html('<input type="radio" name="entry_path" value="{0}" required id="id_entry_path">', record['file_table_file'])
 
-class JobFilesTable(FileTable, dt.Table):
+class JobFilesTable(FileTable):
     actions = dt.Column(empty_values=())
 
     def render_actions(self, value, record):

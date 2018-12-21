@@ -76,7 +76,7 @@ def job_details_view(request, id):
             job_out['std_out'] = "Log file currently not available"
 
         file_list = create_sub_file_list(os.path.split(job_data['command'])[0]) #take the same path as the command script
-        table = JobFilesTable(file_list)
+        table = JobFilesTable(file_list, file_color_pattern=settings.FILE_COLOR_TABLE)
 
         return render(request, 'job_submission/job_details.html', {'job_data' : job_data,
                                                                    'job_data_items' : job_data.items(),
@@ -170,7 +170,7 @@ def job_create_select_entrypoint_view(request):
         form = JobCreationEntrySelectionForm()
 
     file_list = create_sub_file_list(request.session["create_temp_path"])
-    table = SelectFileTable(file_list)
+    table = SelectFileTable(file_list, file_color_pattern=settings.FILE_COLOR_TABLE)
     return render(request, 'job_submission/job_creation_entry_selection.html', {'form':form, 'entry_files':table})
 
 ## Jobs successfully queued
